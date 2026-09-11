@@ -11,6 +11,10 @@ import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.tooling.preview.Preview
+import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.remember
+import androidx.compose.runtime.setValue
 import com.example.golfud.ui.screens.MainMenuScreen
 
 class MainActivity : ComponentActivity() {
@@ -18,14 +22,28 @@ class MainActivity : ComponentActivity() {
         super.onCreate(savedInstanceState)
         enableEdgeToEdge()
         setContent {
-            MainMenuScreen(
-                onPlayClicked = {
-                    // Continuar con funciones de niveles
-                },
-                onExitClicked = {
-                    finish()
+            var currentScreen by remember { mutableStateOf(Screen.MAIN_MENU) }
+
+            when (currentScreen) {
+                Screen.MAIN_MENU -> {
+                    MainMenuScreen(
+                        onPlayClicked = {
+                            currentScreen = Screen.GAME
+                        },
+                        onExitClicked = {
+                            finish()
+                        }
+                    )
                 }
-            )
+                Screen.GAME -> {
+                    GolfGame(onReturnToMenu = {
+                        currentScreen = Screen.MAIN_MENU
+                    })
+                }
+                else -> {
+                    // Handle other screens if needed
+                }
+            }
         }
     }
 }
