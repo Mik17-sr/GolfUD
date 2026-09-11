@@ -42,7 +42,6 @@ import com.example.golfud.ui.theme.GolfTheme
 @Composable
 fun MainMenuScreen(onPlayClicked: () -> Unit, onExitClicked: () -> Unit) {
     val colors = GolfTheme.colors
-
     Box(
         modifier = Modifier
             .fillMaxSize()

@@ -20,7 +20,7 @@ class MainActivity : ComponentActivity() {
         setContent {
             MainMenuScreen(
                 onPlayClicked = {
-                    // Continuar con funciones de niveles
+
                 },
                 onExitClicked = {
                     finish()
