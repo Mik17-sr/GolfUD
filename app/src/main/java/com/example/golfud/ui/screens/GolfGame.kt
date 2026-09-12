@@ -21,7 +21,9 @@ import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.geometry.Offset
+import androidx.compose.ui.geometry.Size
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.graphics.drawscope.translate
 import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.platform.LocalConfiguration
 import androidx.compose.ui.platform.LocalContext
@@ -119,6 +121,8 @@ fun GolfGame(
 
     swingDetector.enabled = (status == GameStatus.AIMING)
 
+    val bossImage = boss?.imageRes?.let { painterResource(id = it) }
+
     Box(modifier = Modifier.fillMaxSize()) {
         Image(
             painter = painterResource(id = currentLevel.sceneImageRes),
@@ -141,7 +145,17 @@ fun GolfGame(
                     topLeft = b.attackZone.topLeft,
                     size = b.attackZone.size
                 )
-                drawCircle(color = b.color, radius = b.radius, center = b.position.toOffset())
+
+                if (bossImage != null) {
+                    val size = Size(b.radius * 4, b.radius * 4)
+                    translate(left = b.position.x - b.radius, top = b.position.y - b.radius) {
+                        with(bossImage) {
+                            draw(size = size)
+                        }
+                    }
+                } else {
+                    drawCircle(color = b.color, radius = b.radius, center = b.position.toOffset())
+                }
             }
 
             projectiles.forEach { p ->

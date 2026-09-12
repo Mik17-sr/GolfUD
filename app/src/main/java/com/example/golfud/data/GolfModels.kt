@@ -62,7 +62,8 @@ data class Boss(
     val currentWaypointIndex: Int = 0,
     val attackType: AttackType = AttackType.ZONE,
     val radius: Float = 40f,
-    val projectiles: List<Projectile> = emptyList()
+    val projectiles: List<Projectile> = emptyList(),
+    val imageRes: Int? = null
 )
 
 data class LevelData(

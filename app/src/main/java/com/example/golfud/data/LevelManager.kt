@@ -18,7 +18,9 @@ object LevelManager {
                     health = 3,
                     maxHealth = 3,
                     waypoints = listOf(Vector2D(w * 0.25f, h * 0.25f), Vector2D(w * 0.75f, h * 0.25f)),
-                    attackType = AttackType.HORIZONTAL_BEAM
+                    attackType = AttackType.HORIZONTAL_BEAM,
+                    radius = 90f,
+                    imageRes = R.drawable.enemy1_fullbody
                 ),
                 par = 3,
                 sceneImageRes = R.drawable.stadium1
