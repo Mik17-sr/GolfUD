@@ -2,6 +2,7 @@ package com.example.golfud.ui.screens
 
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
+import androidx.compose.foundation.border
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
@@ -22,6 +23,7 @@ import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
+import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
@@ -37,15 +39,21 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import com.example.golfud.R
 import com.example.golfud.ui.theme.GolfTheme
+import kotlinx.coroutines.coroutineScope
+import kotlinx.coroutines.delay
+import kotlinx.coroutines.launch
 
 @Composable
 fun SelectCharacterScreen(
+    selectedIndex: Int?,
     onCharacterSelected: (Int) -> Unit,
-    onBackClicked: () -> Unit
+    onBackClicked: () -> Unit,
+    onSelectClicked: () -> Unit
 ) {
     val colors = GolfTheme.colors
-    var selectedIndex by remember { mutableStateOf<Int?>(null) }
+    var isConfirmed by remember { mutableStateOf(false) }
     val characterNames = listOf("Triple T", "Yermo", "Conker", "Crash")
+    val coroutineScope = rememberCoroutineScope()
     Box(
         modifier = Modifier
             .fillMaxSize()
@@ -99,37 +107,29 @@ fun SelectCharacterScreen(
                 horizontalArrangement = Arrangement.SpaceEvenly,
                 verticalAlignment = Alignment.CenterVertically
             ) {
+                val isConfirmed0 = isConfirmed && selectedIndex == 0
+                val isConfirmed1 = isConfirmed && selectedIndex == 1
+                val isConfirmed2 = isConfirmed && selectedIndex == 2
+                val isConfirmed3 = isConfirmed && selectedIndex == 3
                 CharacterCard(
                     isChosen = selectedIndex == 0,
-                    imageResId = R.drawable.player1_default,
-                    onClick = {
-                        selectedIndex = 0
-                        onCharacterSelected(0)
-                    }
+                    imageResId = if (isConfirmed0) R.drawable.player1_selected else R.drawable.player1_default,
+                    onClick = { onCharacterSelected(0) }
                 )
                 CharacterCard(
                     isChosen = selectedIndex == 1,
-                    imageResId = R.drawable.player2_default,
-                    onClick = {
-                        selectedIndex = 1
-                        onCharacterSelected(1)
-                    }
+                    imageResId = if (isConfirmed1) R.drawable.player2_selected else R.drawable.player2_default,
+                    onClick = { onCharacterSelected(1) }
                 )
                 CharacterCard(
                     isChosen = selectedIndex == 2,
-                    imageResId = R.drawable.player3_default,
-                    onClick = {
-                        selectedIndex = 2
-                        onCharacterSelected(2)
-                    }
+                    imageResId = if (isConfirmed2) R.drawable.player3_selected else R.drawable.player3_default,
+                    onClick = { onCharacterSelected(2) }
                 )
                 CharacterCard(
                     isChosen = selectedIndex == 3,
-                    imageResId = R.drawable.player4_default,
-                    onClick = {
-                        selectedIndex = 3
-                        onCharacterSelected(3)
-                    }
+                    imageResId = if (isConfirmed3) R.drawable.player4_selected else R.drawable.player4_default,
+                    onClick = { onCharacterSelected(3) }
                 )
             }
             Text(
@@ -138,6 +138,21 @@ fun SelectCharacterScreen(
                 fontWeight = FontWeight.Bold,
                 color = Color.White
             )
+            SelectButton(
+                text = "SELECCIONAR",
+                backgroundColor = if (selectedIndex != null) colors.buttonPrimary else Color.Gray,
+                enabled = selectedIndex != null,
+                onClick = {
+                    if ( selectedIndex != null) {
+                        isConfirmed = true
+                        coroutineScope.launch {
+                            delay(1500)
+                            onSelectClicked()
+                        }
+                    }
+                }
+            )
+
             BackButton(
                 text = "REGRESAR",
                 backgroundColor = colors.buttonSecondary,
@@ -158,18 +173,23 @@ private fun CharacterCard(
     onClick: () -> Unit
 ) {
     val colors = GolfTheme.colors
-    val scale = if (isChosen) 1.08f else 1f
+    val scale = if (isChosen) 1.12f else 1f
 
     Box(
         modifier = Modifier
-            .size(72.dp)
+            .size(80.dp)
             .scale(scale)
             .shadow(
-                elevation = if (isChosen) 12.dp else 6.dp,
+                elevation = if (isChosen) 16.dp else 6.dp,
                 shape = RoundedCornerShape(16.dp)
             )
             .background(
-                color = colors.buttonPrimary,
+                color = if (isChosen) Color(0xFFFFD700) else colors.buttonPrimary,
+                shape = RoundedCornerShape(16.dp)
+            )
+            .border(
+                width = if (isChosen) 3.dp else 0.dp,
+                color = Color.White,
                 shape = RoundedCornerShape(16.dp)
             )
             .clickable { onClick() },
@@ -181,7 +201,7 @@ private fun CharacterCard(
                 contentDescription = "Character",
                 modifier = Modifier
                     .fillMaxSize()
-                    .padding(0.dp)
+                    .padding(4.dp)
             )
         } else {
             Text(
@@ -193,11 +213,11 @@ private fun CharacterCard(
         }
     }
 }
-
 @Composable
 private fun SelectButton(
     text: String,
     backgroundColor: Color,
+    enabled: Boolean,
     onClick: () -> Unit
 ) {
     Button(

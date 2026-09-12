@@ -18,6 +18,7 @@ import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
 import com.example.golfud.ui.screens.MainMenuScreen
 import com.example.golfud.ui.screens.SelectCharacterScreen
+import com.example.golfud.ui.screens.SelectLevelScreen
 
 class MainActivity : ComponentActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -25,6 +26,8 @@ class MainActivity : ComponentActivity() {
         enableEdgeToEdge()
         setContent {
             var currentScreen by remember { mutableStateOf(Screen.MAIN_MENU) }
+            var selectedCharacterIndex by remember { mutableStateOf<Int?>(null) }
+            var selectedLevelIndex by remember { mutableStateOf<Int?>(null) }
             AnimatedContent(
                 targetState = currentScreen,
                 transitionSpec = {
@@ -51,11 +54,32 @@ class MainActivity : ComponentActivity() {
                     }
                     Screen.CHARACTER_SELECT -> {
                         SelectCharacterScreen(
-                            onCharacterSelected = { characterIndex ->
+                            selectedIndex = selectedCharacterIndex,
+                            onCharacterSelected = { index ->
+                                selectedCharacterIndex = index
+                            },
+                            onSelectClicked = {
+                                if (selectedCharacterIndex != null) {
+                                    currentScreen = Screen.LEVEL_SELECT
+                                }
 
                             },
                             onBackClicked = {
                                 currentScreen = Screen.MAIN_MENU
+                            }
+                        )
+                    }
+                    Screen.LEVEL_SELECT -> {
+                        SelectLevelScreen(
+                            selectedLevelIndex = selectedLevelIndex,
+                            onLevelSelected = { index ->
+                                selectedLevelIndex = index
+                            },
+                            onBackClicked = {
+                                currentScreen = Screen.CHARACTER_SELECT
+                            },
+                            onPlayClicked = {
+
                             }
                         )
                     }
