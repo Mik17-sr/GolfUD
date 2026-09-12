@@ -34,9 +34,11 @@ import androidx.compose.ui.draw.scale
 import androidx.compose.ui.draw.shadow
 import androidx.compose.ui.graphics.Brush
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
+import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import com.example.golfud.R
@@ -242,6 +244,19 @@ private fun LevelCard(
 ) {
     val scale = if (isChosen) 1.03f else 1f
 
+    val cardBackground = when {
+        isConfirmed -> Color(0xFFFFD700)
+        isChosen -> Color(0xFFE3F2FD) // Azul claro para resaltar el nivel seleccionado
+        level.isUnlocked -> Color(0xFFFFFFFF)
+        else -> Color(0xFFE0E0E0)
+    }
+
+    val borderColor = when {
+        isChosen -> Color(0xFF2196F3) // Borde azul vivo para la selección
+        level.isUnlocked -> Color.LightGray
+        else -> Color.DarkGray
+    }
+
     Box(
         modifier = Modifier
             .fillMaxWidth()
@@ -251,12 +266,12 @@ private fun LevelCard(
                 shape = RoundedCornerShape(16.dp)
             )
             .background(
-                color = if (isConfirmed) Color(0xFFFFD700) else Color(0xFFFFFFFF),
+                color = cardBackground,
                 shape = RoundedCornerShape(16.dp)
             )
             .border(
                 width = if (isChosen) 3.dp else 1.dp,
-                color = if (isChosen) Color.White else Color.LightGray,
+                color = borderColor,
                 shape = RoundedCornerShape(16.dp)
             )
             .clickable { onClick() }
@@ -273,8 +288,17 @@ private fun LevelCard(
                     painter = painterResource(id = level.levelImageRes),
                     contentDescription = "Level Scene",
                     modifier = Modifier.fillMaxSize(),
-                    contentScale = androidx.compose.ui.layout.ContentScale.Crop
+                    contentScale = ContentScale.Crop
                 )
+
+                if (!level.isUnlocked) {
+                    Box(
+                        modifier = Modifier
+                            .fillMaxSize()
+                            .background(Color.Black.copy(alpha = 0.5f))
+                    )
+                }
+
                 Box(
                     modifier = Modifier
                         .padding(12.dp)
@@ -283,12 +307,19 @@ private fun LevelCard(
                         .border(1.dp, Color.White, RoundedCornerShape(8.dp)),
                     contentAlignment = Alignment.Center
                 ) {
-                    Text(
-                        text = "${level.id}",
-                        color = Color.White,
-                        fontWeight = FontWeight.Bold,
-                        fontSize = 16.sp
-                    )
+                    if (level.isUnlocked) {
+                        Text(
+                            text = "${level.id}",
+                            color = Color.White,
+                            fontWeight = FontWeight.Bold,
+                            fontSize = 16.sp
+                        )
+                    } else {
+                        Text(
+                            text = "🔒",
+                            fontSize = 14.sp
+                        )
+                    }
                 }
             }
             Column(
@@ -308,10 +339,11 @@ private fun LevelCard(
                     ) {
                         Text(
                             text = level.name,
-                            fontSize = 15.sp,
+                            fontSize = 14.sp,
                             fontWeight = FontWeight.ExtraBold,
-                            color = Color(0xFF2C3E50),
-                            maxLines = 1
+                            color = if (level.isUnlocked) Color(0xFF2C3E50) else Color(0xFF7F8C8D),
+                            maxLines = 1,
+                            overflow = TextOverflow.Ellipsis
                         )
                         Spacer(modifier = Modifier.height(6.dp))
                         Row(
@@ -320,7 +352,7 @@ private fun LevelCard(
                         ) {
                             Box(
                                 modifier = Modifier
-                                    .background(level.difficultyColor, shape = RoundedCornerShape(6.dp))
+                                    .background(if (level.isUnlocked) level.difficultyColor else Color.Gray, shape = RoundedCornerShape(6.dp))
                                     .padding(horizontal = 8.dp, vertical = 2.dp)
                             ) {
                                 Text(
@@ -333,7 +365,7 @@ private fun LevelCard(
                             Text(
                                 text = "★".repeat(level.stars) + "☆".repeat(5 - level.stars),
                                 fontSize = 12.sp,
-                                color = Color(0xFFFFC107)
+                                color = if (level.isUnlocked) Color(0xFFFFC107) else Color.Gray
                             )
                         }
                     }
@@ -343,32 +375,35 @@ private fun LevelCard(
                         modifier = Modifier
                             .background(Color(0xFFF5F5F5), shape = RoundedCornerShape(10.dp))
                             .border(1.dp, Color(0xFFE0E0E0), RoundedCornerShape(10.dp))
-                            .padding(6.dp)
+                            .padding(8.dp)
                     ) {
                         Image(
                             painter = painterResource(id = level.bossImageRes),
                             contentDescription = "Boss",
                             modifier = Modifier
-                                .size(36.dp)
-                                .background(Color.DarkGray, RoundedCornerShape(6.dp)),
-                            contentScale = androidx.compose.ui.layout.ContentScale.Crop
+                                .size(52.dp)
+                                .background(Color.DarkGray, RoundedCornerShape(8.dp)),
+                            contentScale = ContentScale.Crop
                         )
-                        Spacer(modifier = Modifier.width(6.dp))
+                        Spacer(modifier = Modifier.width(8.dp))
                         Column(
-                            modifier = Modifier.width(90.dp)
+                            modifier = Modifier.width(130.dp)
                         ) {
                             Text(
                                 text = level.bossName,
                                 fontSize = 9.sp,
                                 fontWeight = FontWeight.Bold,
                                 color = Color(0xFF333333),
-                                maxLines = 1
+                                maxLines = 1,
+                                overflow = TextOverflow.Ellipsis
                             )
+                            Spacer(modifier = Modifier.height(2.dp))
                             Text(
                                 text = level.bossDescription,
-                                fontSize = 7.sp,
+                                fontSize = 8.sp,
                                 color = Color(0xFF666666),
-                                maxLines = 2
+                                maxLines = 3,
+                                overflow = TextOverflow.Ellipsis
                             )
                         }
                     }
