@@ -19,6 +19,12 @@ import androidx.compose.ui.Modifier
 import com.example.golfud.ui.screens.MainMenuScreen
 import com.example.golfud.ui.screens.SelectCharacterScreen
 import com.example.golfud.ui.screens.SelectLevelScreen
+import androidx.compose.runtime.mutableStateListOf
+import androidx.compose.runtime.remember
+import com.example.golfud.data.LevelDataProvider
+import com.example.golfud.data.LevelInfo
+import com.example.golfud.ui.screens.GolfGame
+import com.example.golfud.ui.screens.SelectLevelScreen
 
 class MainActivity : ComponentActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -28,6 +34,11 @@ class MainActivity : ComponentActivity() {
             var currentScreen by remember { mutableStateOf(Screen.MAIN_MENU) }
             var selectedCharacterIndex by remember { mutableStateOf<Int?>(null) }
             var selectedLevelIndex by remember { mutableStateOf<Int?>(null) }
+            val levels = remember {
+                mutableStateListOf<LevelInfo>().apply {
+                    addAll(LevelDataProvider.defaultLevels)
+                }
+            }
             AnimatedContent(
                 targetState = currentScreen,
                 transitionSpec = {
@@ -71,6 +82,7 @@ class MainActivity : ComponentActivity() {
                     }
                     Screen.LEVEL_SELECT -> {
                         SelectLevelScreen(
+                            levels = levels,
                             selectedLevelIndex = selectedLevelIndex,
                             onLevelSelected = { index ->
                                 selectedLevelIndex = index
@@ -79,7 +91,17 @@ class MainActivity : ComponentActivity() {
                                 currentScreen = Screen.CHARACTER_SELECT
                             },
                             onPlayClicked = {
-
+                                if (selectedLevelIndex != null){
+                                    currentScreen = Screen.GAME
+                                }
+                            }
+                        )
+                    }
+                    Screen.GAME -> {
+                        GolfGame(
+                            selectedLevelIndex = selectedLevelIndex ?: 0,
+                            onReturnToMenu = {
+                                currentScreen = Screen.LEVEL_SELECT
                             }
                         )
                     }
@@ -95,12 +117,4 @@ enum class Screen {
     CHARACTER_SELECT,
     LEVEL_SELECT,
     GAME
-}
-
-@Composable
-fun Greeting(name: String, modifier: Modifier = Modifier) {
-    Text(
-        text = "Hello $name!",
-        modifier = modifier
-    )
 }
