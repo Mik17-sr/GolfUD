@@ -7,7 +7,7 @@ object PhysicsEngine {
     private const val FRICTION = 0.985f
     private const val MIN_VELOCITY = 0.5f
     private const val BOUNCE_RESTITUTION = 0.8f
-    private const val IDLE_DURATION = 1.5f
+    private const val IDLE_DURATION = 3f
     private const val TELEGRAPH_DURATION = 0.8f
     private const val ATTACK_DURATION = 1.2f
     private const val BOSS_MOVE_SPEED = 60f

@@ -25,13 +25,14 @@ import com.example.golfud.data.LevelDataProvider
 import com.example.golfud.data.LevelInfo
 import com.example.golfud.ui.screens.GolfGame
 import com.example.golfud.ui.screens.SelectLevelScreen
+import com.example.golfud.ui.screens.VictoryScreen
 
 class MainActivity : ComponentActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         enableEdgeToEdge()
         setContent {
-            var currentScreen by remember { mutableStateOf(Screen.MAIN_MENU) }
+            var currentScreen by remember { mutableStateOf(Screen.VICTORY) }
             var selectedCharacterIndex by remember { mutableStateOf<Int?>(null) }
             var selectedLevelIndex by remember { mutableStateOf<Int?>(null) }
             val levels = remember {
@@ -102,6 +103,31 @@ class MainActivity : ComponentActivity() {
                             selectedLevelIndex = selectedLevelIndex ?: 0,
                             onReturnToMenu = {
                                 currentScreen = Screen.LEVEL_SELECT
+                            },
+                            totalLevels = levels.size,
+                            onLevelWon = { wonIndex ->
+                                val nextIndex = wonIndex + 1
+                                if (nextIndex in levels.indices && !levels[nextIndex].isUnlocked) {
+                                    levels[nextIndex] = levels[nextIndex].copy(isUnlocked = true)
+                                }
+                            },
+                            onNextLevel = {
+                                val nextIndex = (selectedLevelIndex ?: 0) + 1
+                                if (nextIndex in levels.indices) {
+                                    selectedLevelIndex = nextIndex
+                                }
+                            },
+                            victory = {
+                                currentScreen = Screen.VICTORY
+                            }
+                        )
+                    }
+
+                    Screen.VICTORY -> {
+                        VictoryScreen(
+                            selectedCharacterIndex = selectedCharacterIndex,
+                            onReturnToMenu = {
+                                currentScreen = Screen.MAIN_MENU
                             }
                         )
                     }
@@ -116,5 +142,6 @@ enum class Screen {
     MAIN_MENU,
     CHARACTER_SELECT,
     LEVEL_SELECT,
-    GAME
+    GAME,
+    VICTORY
 }

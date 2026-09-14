@@ -35,7 +35,9 @@ object LevelManager {
                     health = 4,
                     maxHealth = 4,
                     waypoints = listOf(Vector2D(w * 0.2f, h * 0.25f), Vector2D(w * 0.8f, h * 0.25f)),
-                    attackType = AttackType.VERTICAL_BEAM
+                    attackType = AttackType.VERTICAL_BEAM,
+                    radius = 90f,
+                    imageRes = R.drawable.enemy2_fullbody
                 ),
                 par = 4,
                 sceneImageRes = R.drawable.stadium2
@@ -51,7 +53,9 @@ object LevelManager {
                     health = 5,
                     maxHealth = 5,
                     waypoints = listOf(Vector2D(w * 0.3f, h * 0.28f), Vector2D(w * 0.7f, h * 0.28f), Vector2D(w * 0.5f, h * 0.4f)),
-                    attackType = AttackType.CIRCLE_BURST
+                    attackType = AttackType.CIRCLE_BURST,
+                    radius = 90f,
+                    imageRes = R.drawable.enemy3_fullbody
                 ),
                 par = 4,
                 sceneImageRes = R.drawable.stadium3
@@ -67,11 +71,13 @@ object LevelManager {
                 ),
                 boss = Boss(
                     position = Vector2D(w / 2, h * 0.18f),
-                    attackZone = Rect(w * 0.2f, h * 0.15f, w * 0.8f, h * 0.4f),
+                    attackZone = Rect(w * 0.2f, h * 0.15f, w * 1f, h * 0.4f),
                     health = 6,
                     maxHealth = 6,
                     waypoints = listOf(Vector2D(w * 0.25f, h * 0.18f), Vector2D(w * 0.75f, h * 0.18f)),
-                    attackType = AttackType.ZONE
+                    attackType = AttackType.ZONE,
+                    radius = 90f,
+                    imageRes = R.drawable.enemy4_fullbody
                 ),
                 par = 5,
                 sceneImageRes = R.drawable.stadium4
@@ -95,7 +101,9 @@ object LevelManager {
                         Vector2D(w * 0.82f, h * 0.78f),
                         Vector2D(w * 0.18f, h * 0.78f)
                     ),
-                    attackType = AttackType.HOMING_BEAM
+                    attackType = AttackType.HOMING_BEAM,
+                    radius = 90f,
+                    imageRes = R.drawable.enemy5_fullbodydefeat
                 ),
                 par = 6,
                 sceneImageRes = R.drawable.stadium5

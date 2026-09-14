@@ -47,7 +47,11 @@ private enum class GameStatus {
 @Composable
 fun GolfGame(
     selectedLevelIndex: Int,
-    onReturnToMenu: () -> Unit
+    onReturnToMenu: () -> Unit,
+    totalLevels: Int,
+    onLevelWon: (Int) -> Unit,
+    onNextLevel: () -> Unit,
+    victory: () -> Unit
 ) {
     val configuration = LocalConfiguration.current
     val context = LocalContext.current
@@ -57,18 +61,18 @@ fun GolfGame(
     val levelsList = remember { LevelManager.getLevels(screenWidth, screenHeight) }
     val currentLevel = levelsList.getOrElse(selectedLevelIndex) { levelsList[0] }
 
-    var ball by remember { mutableStateOf(Ball(position = currentLevel.startPosition)) }
+    var ball by remember (selectedLevelIndex) { mutableStateOf(Ball(position = currentLevel.startPosition)) }
     val hole = currentLevel.hole
     val obstacles = currentLevel.obstacles
-    var boss by remember { mutableStateOf(currentLevel.boss) }
-    var projectiles by remember { mutableStateOf(currentLevel.boss?.projectiles ?: emptyList()) }
+    var boss by remember (selectedLevelIndex) { mutableStateOf(currentLevel.boss) }
+    var projectiles by remember (selectedLevelIndex) { mutableStateOf(currentLevel.boss?.projectiles ?: emptyList()) }
 
-    var status by remember { mutableStateOf(GameStatus.AIMING) }
-    var strokes by remember { mutableStateOf(0) }
+    var status by remember (selectedLevelIndex) { mutableStateOf(GameStatus.AIMING) }
+    var strokes by remember (selectedLevelIndex) { mutableStateOf(0) }
 
     val swingDetector = remember { SwingDetector(context) }
 
-    DisposableEffect(Unit) {
+    DisposableEffect(selectedLevelIndex) {
         swingDetector.onSwingDetected = { impulse ->
             if (status == GameStatus.AIMING) {
                 ball = ball.copy(velocity = impulse)
@@ -80,7 +84,13 @@ fun GolfGame(
         onDispose { swingDetector.stop() }
     }
 
-    LaunchedEffect(Unit) {
+    LaunchedEffect(status) {
+        if (status == GameStatus.WON) {
+            onLevelWon(selectedLevelIndex)
+        }
+    }
+
+    LaunchedEffect(selectedLevelIndex) {
         while (true) {
             boss = boss?.let { PhysicsEngine.updateBoss(it, 0.016f, screenWidth, screenHeight) }
 
@@ -199,6 +209,11 @@ fun GolfGame(
                         horizontalAlignment = Alignment.CenterHorizontally
                     ) {
                         Text(text = "¡Hoyo completado en $strokes golpes!", color = Color.White, fontSize = 22.sp)
+                        if (selectedLevelIndex + 1 < totalLevels) {
+                            Button(onClick = onNextLevel) { Text("Siguiente nivel")}
+                        } else if (selectedLevelIndex == 5) {
+                            Button(onClick = victory) { Text("Victoria")}
+                        }
                         Button(onClick = onReturnToMenu) { Text("Volver al menú") }
                     }
                 }
@@ -210,6 +225,7 @@ fun GolfGame(
                         Text(text = "¡Golpeado por el jefe!", color = Color.White, fontSize = 22.sp)
                         Button(onClick = {
                             ball = Ball(position = currentLevel.startPosition)
+                            boss = currentLevel.boss
                             status = GameStatus.AIMING
                         }) { Text("Reintentar") }
                     }
