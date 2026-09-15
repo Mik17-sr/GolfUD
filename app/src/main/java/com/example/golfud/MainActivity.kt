@@ -32,7 +32,7 @@ class MainActivity : ComponentActivity() {
         super.onCreate(savedInstanceState)
         enableEdgeToEdge()
         setContent {
-            var currentScreen by remember { mutableStateOf(Screen.VICTORY) }
+            var currentScreen by remember { mutableStateOf(Screen.MAIN_MENU) }
             var selectedCharacterIndex by remember { mutableStateOf<Int?>(null) }
             var selectedLevelIndex by remember { mutableStateOf<Int?>(null) }
             val levels = remember {
