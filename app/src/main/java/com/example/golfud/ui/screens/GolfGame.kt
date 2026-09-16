@@ -211,7 +211,7 @@ fun GolfGame(
                         Text(text = "¡Hoyo completado en $strokes golpes!", color = Color.White, fontSize = 22.sp)
                         if (selectedLevelIndex + 1 < totalLevels) {
                             Button(onClick = onNextLevel) { Text("Siguiente nivel")}
-                        } else if (selectedLevelIndex == 5) {
+                        } else if (selectedLevelIndex == 4) {
                             Button(onClick = victory) { Text("Victoria")}
                         }
                         Button(onClick = onReturnToMenu) { Text("Volver al menú") }

@@ -23,8 +23,8 @@ fun VictoryScreen(
     val imageResId = when (selectedCharacterIndex) {
         0 -> R.drawable.player1_victory
         1 -> R.drawable.player2_victory
-        2 -> R.drawable.player3_victory
-        3 -> R.drawable.player4_victory
+        2 -> R.drawable.player4_victory
+        3 -> R.drawable.player3_victory
         else -> R.drawable.player1_victory
     }
 

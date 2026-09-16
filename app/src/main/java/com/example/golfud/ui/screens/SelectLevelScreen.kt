@@ -172,13 +172,13 @@ private fun LevelCard(
 
     val cardBackground = when {
         isConfirmed -> Color(0xFFFFD700)
-        isChosen -> Color(0xFFE3F2FD) // Azul claro para resaltar el nivel seleccionado
+        isChosen -> Color(0xFFE3F2FD)
         level.isUnlocked -> Color(0xFFFFFFFF)
         else -> Color(0xFFE0E0E0)
     }
 
     val borderColor = when {
-        isChosen -> Color(0xFF2196F3) // Borde azul vivo para la selección
+        isChosen -> Color(0xFF2196F3)
         level.isUnlocked -> Color.LightGray
         else -> Color.DarkGray
     }
